@@ -23,6 +23,37 @@
 
 // NVIC (Nested Vectored Interrupt Controller)
 #define nvic_reg_iser1 *((volatile unsigned int *)0xE000E104)
+
+//RING BUFFER
+
+//defining a structure for the ring buffer
+ struct rx_buffer{
+  char ring_buffer[64]; //to store the received bits 
+  volatile unsigned int head;//index position of ring buffer to where received data should be stored
+  volatile unsigned int tail; //index position of ring buffer from where received data should be retrieved
+  }
+  
+  //creating a ring buffer struct (rx_b1)
+	struct rx_buffer rx_b1;
+	rx_b1.head=0;rx_b1.tail=0;
+ 
+  //creating a function to put data into ring buffer	
+	void ring_buffer_push(char data)
+	{
+	 //checking if the buffer is full 
+	  if((rx_b1.head+1)%64!=rx_b1.tail){
+	  rx_b1.ring_buffer[rx_b1.head]==data; //adding the data to buffer if it is not full
+	  rx_b1.head=(rx_b1.head+1)%64; //incrementing the head
+	  }}
+	  
+  //creating a function to take data from ring buffer	  
+	  char ring_buffer_pop(void)
+	  {
+	    // condition for empty buffer is checked in the main then comes to this function
+	    char ab=rx_b1.ring_buffer[rx_b1.tail]; //taking data from the buffer and storing in ab
+	    rx_b1.tail=(rx_b1.tail+1)%64; //incrementing the tail
+	    return ab; //returning ab
+	    }
 	
 volatile unsigned int ticks = 0;
 
@@ -72,7 +103,7 @@ void USART1_IRQHandler(void) {
         // Read character (automatically clears the interrupt flag)
         char c = (char)data_reg;
         // Echo character back to the terminal
-        kira_print_char(c);
+        ring_buffer_push(c);
     }
 }
 
@@ -99,6 +130,8 @@ int main() {
     // 6. Main OS Loop
     while(1) {
        kira_print_string("created a uart stuff basic"); 
+       if(rx_b1.head!=rx_b1.tail) //checking if the ring buffer is not empty
+       {char ba=ring_buffer_pop();kira_print_char(ba);}//retrieving data from buffer and then printing
         delayms(1000);
     }
     
