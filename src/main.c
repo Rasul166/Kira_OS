@@ -42,7 +42,7 @@
 	{
 	 //checking if the buffer is full 
 	  if((rx_b1.head+1)%64!=rx_b1.tail){
-	  rx_b1.ring_buffer[rx_b1.head]==data; //adding the data to buffer if it is not full
+	  rx_b1.ring_buffer[rx_b1.head]=data; //adding the data to buffer if it is not full
 	  rx_b1.head=(rx_b1.head+1)%64; //incrementing the head
 	  }}
 	  
@@ -129,10 +129,14 @@ int main() {
     
     // 6. Main OS Loop
     while(1) {
-       kira_print_string("created a uart stuff basic"); 
-       if(rx_b1.head!=rx_b1.tail) //checking if the ring buffer is not empty
-       {char ba=ring_buffer_pop();kira_print_char(ba);}//retrieving data from buffer and then printing
-        delayms(1000);
+       kira_print_string("created a uart stuff basic \r\n"); 
+       while(rx_b1.head!=rx_b1.tail) //checking if the ring buffer is not empty
+       {
+			 char ba=ring_buffer_pop();
+			 kira_print_char(ba);
+			 }
+			 //retrieving data from buffer and then printing
+    delayms(1000);
     }
     
     return 0;
