@@ -31,11 +31,11 @@
   char ring_buffer[64]; //to store the received bits 
   volatile unsigned int head;//index position of ring buffer to where received data should be stored
   volatile unsigned int tail; //index position of ring buffer from where received data should be retrieved
-  }
+  };
   
   //creating a ring buffer struct (rx_b1)
-	struct rx_buffer rx_b1;
-	rx_b1.head=0;rx_b1.tail=0;
+	
+	struct rx_buffer rx_b1={.head=0,.tail=0};
  
   //creating a function to put data into ring buffer	
 	void ring_buffer_push(char data)
