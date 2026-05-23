@@ -42,7 +42,7 @@
 	{
 	 //checking if the buffer is full 
 	  if((rx_b1.head+1)%64!=rx_b1.tail){
-	  rx_b1.ring_buffer[rx_b1.head]==data; //adding the data to buffer if it is not full
+	  rx_b1.ring_buffer[rx_b1.head]=data; //adding the data to buffer if it is not full
 	  rx_b1.head=(rx_b1.head+1)%64; //incrementing the head
 	  }}
 	  
