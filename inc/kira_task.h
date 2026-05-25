@@ -11,4 +11,8 @@ extern uint32_t Task_Stack[MAX_TASKS][STACK_SIZE]; // Physical RAM for the tasks
 extern TCB_t Task_table[MAX_TASKS];                // The OS Task Table
 extern volatile int current_task ;
 extern volatile int task_count;
+
 void kira_task_create(void (*task_function)(void)); 
+=======
+void kira_task_create(void (*task_function)(void)); 
+>>>>>>> b8c01af80fd9b545a47bcc415b4cb1c37c41460d

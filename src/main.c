@@ -9,8 +9,8 @@
 #define gpio_crh *((volatile unsigned int *)0x40011004)
 #define gpio_odr *((volatile unsigned int *)0x4001100C)
   
-	 int current_task=0;
-      int task_count=0;
+	volatile int current_task=0;
+     volatile int task_count=0;
 	
 
 
