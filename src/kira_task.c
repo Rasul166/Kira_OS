@@ -1,7 +1,7 @@
 #include<kira_task.h>
 #include<kira_uart.h>
-int current_task=0;
-int task_count=0;
+volatile int current_task=0;
+volatile int task_count=0;
 void kira_task_create(void (*task_function)(void)) {
     // Prevent array overflow if we try to create too many tasks
     if (current_task >= MAX_TASKS) {
