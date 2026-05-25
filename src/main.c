@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <kira_uart.h>
 #include<kira_delay.h>
-
+#include<kira_task.h>
 // Reset and Clock Control
 #define rcc_apb2enr *((volatile unsigned int *)0x40021018)
 
@@ -9,7 +9,8 @@
 #define gpio_crh *((volatile unsigned int *)0x40011004)
 #define gpio_odr *((volatile unsigned int *)0x4001100C)
   
-	  
+	 int current_task=0;
+      int task_count=0;
 	
 
 

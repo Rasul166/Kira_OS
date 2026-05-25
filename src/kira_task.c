@@ -1,4 +1,7 @@
 #include<kira_task.h>
+#include<kira_uart.h>
+int current_task=0;
+int task_count=0;
 void kira_task_create(void (*task_function)(void)) {
     // Prevent array overflow if we try to create too many tasks
     if (current_task >= MAX_TASKS) {
@@ -17,4 +20,11 @@ void kira_task_create(void (*task_function)(void)) {
     
     // 4. Move to the next slot in the OS table for the next task
     current_task++;
+}
+void kira_schedular(void){
+
+    kira_print_string("Scheduler Fired!\n");
+    current_task++;
+    if(current_task>=task_count)task_count=0;
+    scb_icsr|=(1<<28);
 }
