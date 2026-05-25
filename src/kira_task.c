@@ -2,6 +2,8 @@
 #include<kira_uart.h>
 volatile int current_task=0;
 volatile int task_count=0;
+ uint32_t Task_Stack[MAX_TASKS][STACK_SIZE]; // Physical RAM for the tasks
+ TCB_t Task_table[MAX_TASKS]; 
 void kira_task_create(void (*task_function)(void)) {
     // Prevent array overflow if we try to create too many tasks
     if (current_task >= MAX_TASKS) {
