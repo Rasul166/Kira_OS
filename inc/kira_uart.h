@@ -19,7 +19,7 @@ struct rx_buffer{
   volatile unsigned int head;//index position of ring buffer to where received data should be stored
   volatile unsigned int tail; //index position of ring buffer from where received data should be retrieved
   };
-   struct rx_buffer rx_b1={.head=0,.tail=0};
+  extern struct rx_buffer rx_b1;
 void ring_buffer_push(char data);
 	  char ring_buffer_pop(void);
       void USART1_IRQHandler(void) ;

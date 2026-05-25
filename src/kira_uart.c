@@ -1,5 +1,7 @@
 
 #include<kira_uart.h>
+struct rx_buffer rx_b1={.head=0,.tail=0};
+
 void ring_buffer_push(char data)
 	{
 	 //checking if the buffer is full 

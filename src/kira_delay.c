@@ -1,4 +1,5 @@
 #include<kira_delay.h>
+volatile unsigned int ticks=0;
 void delayms(int no_of_ms) {
     unsigned int start = ticks;
     while(ticks - start < no_of_ms) {}
