@@ -9,6 +9,6 @@ typedef struct {
 #define scb_icsr *((volatile unsigned int *)0xE000ED04)
 extern uint32_t Task_Stack[MAX_TASKS][STACK_SIZE]; // Physical RAM for the tasks
 extern TCB_t Task_table[MAX_TASKS];                // The OS Task Table
-extern int current_task ;
-extern int task_count;
+extern volatile int current_task ;
+extern volatile int task_count;
 void kira_task_create(void (*task_function)(void)); 
