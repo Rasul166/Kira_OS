@@ -34,3 +34,6 @@ void kira_scheduler(void){
     current_task_pointer=&Task_table[current_task];
     scb_icsr|=(1<<28);
 }
+void kira_os_start(void){
+    _asm("SVC #0");
+}
