@@ -1,8 +1,13 @@
 #include<stdint.h>
 void kira_schedular(void);
 typedef struct {
-    uint32_t *sp; // The Stack Pointer
+    uint32_t *sp;
+    unsigned char state;
+    unsigned int sleep_ticks; // The Stack Pointer
 } TCB_t;
+#define TASK_READY 0
+#define TASK_SLEEPING 1
+#define TASK_BLOCKED 2
 #define MAX_TASKS 3
 #define STACK_SIZE 100
 #define scb_shpr3 *((volatile unsigned int *)0xE000ED20)
