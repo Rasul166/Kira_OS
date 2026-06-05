@@ -1,5 +1,4 @@
 #include<stdint.h>
-void kira_schedular(void);
 typedef struct {
     uint32_t *sp;
     unsigned char state;
@@ -18,6 +17,7 @@ extern volatile int *current_task_pointer ;
 extern volatile int *next_task_pointer;
 extern volatile int current_task;
 extern volatile int task_count;
-
+void kira_scheduler(void);
 void kira_task_create(void (*task_function)(void)); 
-
+void kira_task_sleep(unsigned int ms);
+void kira_os_start(void);

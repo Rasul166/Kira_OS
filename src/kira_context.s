@@ -11,7 +11,7 @@ LDR R1,next_task_pointer
 LDR R0,[R1]
 LDMIA R0!,{R4-R11}
 MSR PSP,R0
-LDR Ir,=0xFFFFFFFD
+LDR lr,=0xFFFFFFFD
 BX Ir
 
 SVC_Handler

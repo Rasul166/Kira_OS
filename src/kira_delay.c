@@ -15,9 +15,9 @@ void SysTick_Handler(void) {
        }}
 
     }
-    kira_schedular();
+    kira_scheduler();
 }
-void kira_delay_init(void){
+void kira_systick_init(void){
  loadreg = 107999;
     currreg = 0;
     ctrlreg |= (7);
