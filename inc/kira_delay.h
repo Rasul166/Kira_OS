@@ -5,5 +5,5 @@ extern volatile unsigned int ticks ;
 
 void delayms(int no_of_ms) ;
 void SysTick_Handler(void) ;
-void kira_delay_init(void);
+void kira_systick_init(void);
 

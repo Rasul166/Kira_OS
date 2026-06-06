@@ -9,38 +9,21 @@
 #define gpio_crh *((volatile unsigned int *)0x40011004)
 #define gpio_odr *((volatile unsigned int *)0x4001100C)
   
-	
-	
-
-
-
+void Task1(void){
+    kira_print_string("Tick");
+    kira_task_sleep(1000);
+}
+void Task2(void){
+    kira_print_string("Tock");
+    kira_task_sleep(500);
+}
 int main() {
     // 1. Initialize SysTick (1ms heartbeat at 72MHz / 8)
-   kira_delay_init();
-    
-    // 2. Initialize Port C Clock for LED (Bit 4)
-    rcc_apb2enr |= (1<<4);
-    
-    // 3. Configure PC13 for LED
-    gpio_crh &= ~(0xF<<20);
-    gpio_crh |= (0x2<<20);
-    
-    
-    
-    // 5. Initialize UART & NVIC
-    kira_uart_init();
-    
-    // 6. Main OS Loop
-    while(1) {
-       kira_print_string("created a uart stuff basic \r\n"); 
-       while(rx_b1.head!=rx_b1.tail) //checking if the ring buffer is not empty
-       {
-			 char ba=ring_buffer_pop();
-			 kira_print_char(ba);
-			 }
-			 //retrieving data from buffer and then printing
-    delayms(1000);
-    }
+kira_uart_init();
+	kira_task_create(Task1);
+	  kira_task_create(Task2);
+		kira_os_start();
+	kira_systick_init();
     
     return 0;
 }
