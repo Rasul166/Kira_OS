@@ -40,7 +40,7 @@ void kira_scheduler(void){
          current_task=(current_task+1)%task_count;
     }while(temp!=current_task&&Task_table[current_task].state!=TASK_READY);
     
-    current_task_pointer=&Task_table[current_task];
+    next_task_pointer=&Task_table[current_task];
     scb_icsr|=(1<<28);
 }
 void kira_os_start(void){

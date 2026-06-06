@@ -19,11 +19,11 @@ void Task2(void){
 }
 int main() {
     // 1. Initialize SysTick (1ms heartbeat at 72MHz / 8)
-
+kira_uart_init();
 	kira_task_create(Task1);
 	  kira_task_create(Task2);
 		kira_os_start();
-	kira_delay_init();
+	kira_systick_init();
     
     return 0;
 }
