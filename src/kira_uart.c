@@ -3,7 +3,7 @@
 struct rx_buffer rx_b1={.head=0,.tail=0};
 
 void ring_buffer_push(char data)
-	{
+	{  
 	 //checking if the buffer is full 
 	  if((rx_b1.head+1)%64!=rx_b1.tail){
 	  rx_b1.ring_buffer[rx_b1.head]=data; //adding the data to buffer if it is not full
@@ -18,6 +18,7 @@ void ring_buffer_push(char data)
 	    }
 
         void kira_uart_init(void) {
+					
     // Enable Clocks: GPIOA (Bit 2), USART1 (Bit 14), and AFIO (Bit 0)
     rcc_apb2enr |= ((1<<2) | (1<<14) | (1<<0));
     

@@ -12,8 +12,9 @@ PendSV_Handler
 	STR R0,[R2]
 	LDR R1,=next_task_pointer
 	LDR R2,[R1]
-	LDMIA R0!,{R4-R11}
-	MSR PSP,R0
+	LDR R3,[R2]
+	LDMIA R3!,{R4-R11}
+	MSR PSP,R3
 
 	LDR R1, =next_task_pointer      ; Get the address of next_task_pointer
     LDR R2, [R1]                    ; Read the TCB address inside it
