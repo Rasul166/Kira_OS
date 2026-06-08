@@ -36,7 +36,7 @@ void kira_scheduler(void){
     int temp=current_task;
 
     do{
-         current_task=(current_task+1)%task_count-1;
+         current_task=(current_task+1)%(task_count-1);
     }while(temp!=current_task&&Task_table[current_task].state!=TASK_READY);
     if(Task_table[current_task].state==TASK_READY)
      {next_task_pointer=&Task_table[current_task];}
