@@ -1,4 +1,4 @@
-#include<kira_task.h>
+ #include<kira_task.h>
 #include<kira_uart.h>
 #define TASK_READY 0
 #define TASK_SLEEPING 1
@@ -36,14 +36,17 @@ void kira_scheduler(void){
     int temp=current_task;
 
     do{
-         current_task=(current_task+1)%task_count;
+         current_task=(current_task+1)%task_count-1;
     }while(temp!=current_task&&Task_table[current_task].state!=TASK_READY);
-    
-    next_task_pointer=&Task_table[current_task];
+    if(Task_table[current_task].state==TASK_READY)
+     {next_task_pointer=&Task_table[current_task];}
+    else
+    {next_task_pointer=&Task_table[task_count-1];}
     scb_icsr|=(1<<28);
 }
 void kira_os_start(void){
 	    kira_print_string("os_s");
+        kira_task_create(kira_idle_task);
 			    __asm volatile ("svc 0");
 
 }
@@ -52,4 +55,10 @@ void kira_task_sleep(unsigned int ms){
     Task_table[current_task].sleep_ticks=ms;
         scb_icsr|=(1<<28);
 
+}
+void kira_idle_task(void){
+    while(1){
+        __asm volatile("WFI");
+        kira_print_string("i  ");
+    }
 }

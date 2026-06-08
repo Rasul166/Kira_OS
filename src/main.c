@@ -10,11 +10,17 @@
 #define gpio_odr *((volatile unsigned int *)0x4001100C)
 void Task1(void){
 	while(1){
-    kira_print_string("Tick"); }
+    kira_print_string("a");
+	kira_task_sleep(6);
+		delayms(1);
+	}
 }
 void Task2(void){
-	while(1){
-    kira_print_string("Tock"); }
+	 while(1){
+    kira_print_string("b");
+    kira_task_sleep(2);
+		delayms(1);
+	 }
 }
 
 int main() {

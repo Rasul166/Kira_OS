@@ -21,3 +21,4 @@ void kira_scheduler(void);
 void kira_task_create(void (*task_function)(void)); 
 void kira_task_sleep(unsigned int ms);
 void kira_os_start(void);
+void kira_idle_task(void);
