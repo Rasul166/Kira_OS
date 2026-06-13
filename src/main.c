@@ -13,7 +13,7 @@ Mutex_t uart_mutex;
 void Task1(void){
 	while(1){
 	kira_mutex_take(&uart_mutex);
-    kira_print_time_and_text("I am T1");
+    kira_print_string("1111111111111111111111111111 end ");
 kira_mutex_give(&uart_mutex);
 		kira_task_sleep(6);
 	}
@@ -25,7 +25,7 @@ kira_mutex_give(&uart_mutex);
 void Task2(void){
 	 while(1){
 		kira_mutex_take(&uart_mutex);
-    kira_print_time_and_text("I am T2");
+    kira_print_string("222222222222222222222222222 end");
 	 kira_mutex_give(&uart_mutex);
 		   kira_task_sleep(2);
 	 }

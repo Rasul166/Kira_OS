@@ -82,8 +82,8 @@ __disable_irq();
 	}else{
 	mutex->blocked_task_id=current_task;
 	Task_table[current_task].state=TASK_BLOCKED;
-		__enable_irq();
-		scb_icsr|=(1<<28);
+		__enable_irq();	
+		kira_scheduler();
 	}
 }
 void kira_mutex_give(Mutex_t *mutex){
