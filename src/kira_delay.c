@@ -8,6 +8,7 @@ void delayms(int no_of_ms) {
     while(ticks - start < no_of_ms) {}
 }
 void SysTick_Handler(void) {
+	
     ticks++;
     for(int i=0;i<3;i++){
        if(Task_table[i].state==TASK_SLEEPING){Task_table[i].sleep_ticks--;
@@ -19,6 +20,7 @@ void SysTick_Handler(void) {
     kira_scheduler();
 }
 void kira_systick_init(void){
+	
  loadreg = 7999;
     currreg = 0;
     ctrlreg |= (7);

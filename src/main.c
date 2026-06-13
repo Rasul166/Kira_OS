@@ -8,20 +8,31 @@
 // GPIO Port C (LED Blinking)
 #define gpio_crh *((volatile unsigned int *)0x40011004)
 #define gpio_odr *((volatile unsigned int *)0x4001100C)
+Mutex_t uart_mutex;
+	
 void Task1(void){
 	while(1){
-    kira_print_string("a");
-	kira_task_sleep(6);
+	kira_mutex_take(&uart_mutex);
+    kira_print_time_and_text("I am T1");
+kira_mutex_give(&uart_mutex);
+		kira_task_sleep(6);
+	}
+		
+	
 		delayms(1);
 	}
-}
+
 void Task2(void){
 	 while(1){
-    kira_print_string("b");
-    kira_task_sleep(2);
+		kira_mutex_take(&uart_mutex);
+    kira_print_time_and_text("I am T2");
+	 kira_mutex_give(&uart_mutex);
+		   kira_task_sleep(2);
+	 }
+  
 		delayms(1);
 	 }
-}
+
 
 int main() {
     // 1. Initialize SysTick (1ms heartbeat at 72MHz / 8)
@@ -30,6 +41,7 @@ int main() {
 	kira_task_create(Task2);
 
 	kira_systick_init();
+	kira_mutex_init(&uart_mutex);
 	kira_os_start();
     return 0;
 }

@@ -11,7 +11,7 @@
 
 // NVIC (Nested Vectored Interrupt Controller)
 #define nvic_reg_iser1 *((volatile unsigned int *)0xE000E104)
-
+void kira_print_time_and_text(char* text) ;
 void kira_uart_init(void);
 void kira_print_string(char *str);
 void kira_print_char(char c);

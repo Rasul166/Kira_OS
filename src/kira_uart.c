@@ -1,5 +1,7 @@
 
 #include<kira_uart.h>
+#include<stdint.h>
+#include<kira_delay.h>
 struct rx_buffer rx_b1={.head=0,.tail=0};
 
 void ring_buffer_push(char data)
@@ -18,7 +20,7 @@ void ring_buffer_push(char data)
 	    }
 
         void kira_uart_init(void) {
-					
+				
     // Enable Clocks: GPIOA (Bit 2), USART1 (Bit 14), and AFIO (Bit 0)
     rcc_apb2enr |= ((1<<2) | (1<<14) | (1<<0));
     
@@ -55,4 +57,37 @@ void USART1_IRQHandler(void) {
         // Echo character back to the terminal
         ring_buffer_push(c);
     }
+}
+void kira_print_time_and_text(char* text) {
+    char time_str[12]; 
+   unsigned int temp = ticks;
+    int i = 0;
+    
+    // 1. If time is 0, handle it directly
+    if (temp == 0) {
+        time_str[i++] = '0';
+    } 
+    // 2. Extract digits backwards (e.g., 1024 becomes '4','2','0','1')
+    else {
+        while (temp > 0) {
+            time_str[i++] = (temp % 10) + '0'; // Convert number to ASCII character
+            temp /= 10;
+        }
+    }
+    kira_print_string(text);
+    // 3. Print the brackets: "["
+    kira_print_string("[");
+    
+    // 4. Print the numbers in the correct forward order
+    while (i > 0) {
+        i--;
+        // Send a single character to UART (assuming you have a character print function)
+        // If you only have kira_print_string, you can make a temporary 2-char array:
+        char single_char_str[2] = {time_str[i], '\0'};
+        kira_print_string(single_char_str); 
+    }
+    
+    // 5. Print the closing bracket and the user's text
+    kira_print_string("] \n");
+    
 }

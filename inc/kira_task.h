@@ -4,6 +4,12 @@ typedef struct {
     unsigned char state;
     unsigned int sleep_ticks; // The Stack Pointer
 } TCB_t;
+typedef struct{
+	unsigned char is_locked;
+	int owner_task_id;
+	int blocked_task_id;
+
+} Mutex_t;
 #define TASK_READY 0
 #define TASK_SLEEPING 1
 #define TASK_BLOCKED 2
@@ -22,3 +28,8 @@ void kira_task_create(void (*task_function)(void));
 void kira_task_sleep(unsigned int ms);
 void kira_os_start(void);
 void kira_idle_task(void);
+void kira_mutex_init(Mutex_t *mutex);
+void kira_mutex_take(Mutex_t *mutex);	
+void kira_mutex_give(Mutex_t *mutex);
+void __disable_irq();
+void __enable_irq();

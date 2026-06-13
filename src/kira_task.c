@@ -11,6 +11,7 @@ volatile int task_count=0;
  uint32_t Task_Stack[MAX_TASKS][STACK_SIZE]; // Physical RAM for the tasks
  TCB_t Task_table[MAX_TASKS]; 
 void kira_task_create(void (*task_function)(void)) {
+
     // Prevent array overflow if we try to create too many tasks
     if (task_count >= MAX_TASKS) {
         return; 
@@ -32,7 +33,7 @@ void kira_task_create(void (*task_function)(void)) {
     task_count++;
 }
 void kira_scheduler(void){
-
+  
     int temp=current_task;
 
     do{
@@ -45,12 +46,16 @@ void kira_scheduler(void){
     scb_icsr|=(1<<28);
 }
 void kira_os_start(void){
-	    kira_print_string("os_s");
+	
+	    
         kira_task_create(kira_idle_task);
+	
 			    __asm volatile ("svc 0");
+	
 
 }
 void kira_task_sleep(unsigned int ms){
+
     Task_table[current_task].state=TASK_SLEEPING;
     Task_table[current_task].sleep_ticks=ms;
         scb_icsr|=(1<<28);
@@ -59,6 +64,38 @@ void kira_task_sleep(unsigned int ms){
 void kira_idle_task(void){
     while(1){
         __asm volatile("WFI");
-        kira_print_string("i  ");
+      
     }
+}
+void kira_mutex_init(Mutex_t *mutex){
+	
+	mutex->is_locked=0;
+ mutex->blocked_task_id=-1;
+	mutex->owner_task_id=-1;
+} 
+void kira_mutex_take(Mutex_t *mutex){
+__disable_irq();
+	if(mutex->is_locked==0){
+		mutex->is_locked=1;
+	mutex->owner_task_id=current_task	;
+	__enable_irq();
+	}else{
+	mutex->blocked_task_id=current_task;
+	Task_table[current_task].state=TASK_BLOCKED;
+		__enable_irq();
+		scb_icsr|=(1<<28);
+	}
+}
+void kira_mutex_give(Mutex_t *mutex){
+	__disable_irq();
+if (mutex->owner_task_id == current_task){
+mutex->is_locked=0;
+		mutex->owner_task_id=-1;
+	if(mutex->blocked_task_id!=-1){
+		Task_table[mutex->blocked_task_id].state=TASK_READY;
+		mutex->blocked_task_id=-1;
+	}
+}
+__enable_irq();
+scb_icsr|=(1<<28);
 }
