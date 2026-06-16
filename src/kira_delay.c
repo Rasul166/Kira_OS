@@ -21,7 +21,7 @@ void SysTick_Handler(void) {
 }
 void kira_systick_init(void){
 	
- loadreg = 7999;
+ loadreg = 71999;
     currreg = 0;
     ctrlreg |= (7);
 }

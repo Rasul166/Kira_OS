@@ -10,10 +10,14 @@ typedef struct{
 	int blocked_task_id;
 
 } Mutex_t;
+typedef struct{
+    unsigned char count;
+    int blocked_task_id;
+} Semaphore_t;
 #define TASK_READY 0
 #define TASK_SLEEPING 1
 #define TASK_BLOCKED 2
-#define MAX_TASKS 3
+#define MAX_TASKS 4
 #define STACK_SIZE 100
 #define scb_shpr3 *((volatile unsigned int *)0xE000ED20)
 #define scb_icsr *((volatile unsigned int *)0xE000ED04)
@@ -33,3 +37,6 @@ void kira_mutex_take(Mutex_t *mutex);
 void kira_mutex_give(Mutex_t *mutex);
 void __disable_irq();
 void __enable_irq();
+void kira_semaphore_init(Semaphore_t *semaphore);
+void kira_semaphore_wait(Semaphore_t *semaphore);
+void kira_semaphore_signal(Semaphore_t *semaphore);

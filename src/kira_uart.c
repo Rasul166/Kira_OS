@@ -2,6 +2,8 @@
 #include<kira_uart.h>
 #include<stdint.h>
 #include<kira_delay.h>
+#include<kira_task.h>
+extern Semaphore_t rx_sem;
 struct rx_buffer rx_b1={.head=0,.tail=0};
 
 void ring_buffer_push(char data)
@@ -14,11 +16,16 @@ void ring_buffer_push(char data)
       char ring_buffer_pop(void)
 	  {
 	    // condition for empty buffer is checked in the main then comes to this function
+        if(rx_b1.tail!=rx_b1.head)
+        {
 	    char ab=rx_b1.ring_buffer[rx_b1.tail]; //taking data from the buffer and storing in ab
 	    rx_b1.tail=(rx_b1.tail+1)%64; //incrementing the tail
 	    return ab; //returning ab
 	    }
-
+        else {
+            return '_';
+        }
+    }
         void kira_uart_init(void) {
 				
     // Enable Clocks: GPIOA (Bit 2), USART1 (Bit 14), and AFIO (Bit 0)
@@ -56,6 +63,7 @@ void USART1_IRQHandler(void) {
         char c = (char)data_reg;
         // Echo character back to the terminal
         ring_buffer_push(c);
+        kira_semaphore_signal(&rx_sem);
     }
 }
 void kira_print_time_and_text(char* text) {

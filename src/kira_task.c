@@ -58,7 +58,7 @@ void kira_task_sleep(unsigned int ms){
 
     Task_table[current_task].state=TASK_SLEEPING;
     Task_table[current_task].sleep_ticks=ms;
-        scb_icsr|=(1<<28);
+        kira_scheduler();
 
 }
 void kira_idle_task(void){
@@ -75,27 +75,80 @@ void kira_mutex_init(Mutex_t *mutex){
 } 
 void kira_mutex_take(Mutex_t *mutex){
 __disable_irq();
-	if(mutex->is_locked==0){
+	if(mutex->is_locked==0)
+    {
 		mutex->is_locked=1;
-	mutex->owner_task_id=current_task	;
-	__enable_irq();
-	}else{
+	mutex->owner_task_id=current_task;
+
+	}
+    else
+    {
 	mutex->blocked_task_id=current_task;
 	Task_table[current_task].state=TASK_BLOCKED;
-		__enable_irq();	
-		kira_scheduler();
-	}
-}
+    }	
+	kira_scheduler();
+    __enable_irq();
+    
+} 	
+        
+	
+
 void kira_mutex_give(Mutex_t *mutex){
 	__disable_irq();
 if (mutex->owner_task_id == current_task){
-mutex->is_locked=0;
-		mutex->owner_task_id=-1;
-	if(mutex->blocked_task_id!=-1){
-		Task_table[mutex->blocked_task_id].state=TASK_READY;
-		mutex->blocked_task_id=-1;
+    if(mutex->blocked_task_id!=-1)
+    {  
+        Task_table[mutex->blocked_task_id].state=TASK_READY;
+        mutex->owner_task_id=mutex->blocked_task_id;
+        mutex->blocked_task_id=-1;
+    }    
+    else
+     {
+        mutex->is_locked=0;
+        mutex->owner_task_id=-1;
+     }
+    
 	}
+    
+    kira_scheduler();
+    __enable_irq();
 }
-__enable_irq();
-scb_icsr|=(1<<28);
+
+void kira_semaphore_init(Semaphore_t *semaphore)
+{
+    semaphore->count=0;
+    semaphore->blocked_task_id=-1;
+}
+
+void kira_semaphore_wait(Semaphore_t *semaphore)
+{
+    __disable_irq();
+    if(semaphore->count=1)
+    {
+        semaphore->count=0;
+        __enable_irq();
+    }
+    else
+    {
+        semaphore->blocked_task_id=current_task;
+        Task_table[current_task].state=TASK_BLOCKED;
+        kira_scheduler();
+        __enable_irq();
+    }
+}
+
+void kira_semaphore_signal(Semaphore_t *semaphore)
+{
+    __disable_irq();
+    if(semaphore->blocked_task_id!=-1)
+    {
+        Task_table[current_task].state=TASK_READY;
+        semaphore->blocked_task_id=-1;
+        kira_scheduler();
+    }
+    else
+    {
+        semaphore->count=1;
+    }
+    __enable_irq();
 }
