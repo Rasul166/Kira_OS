@@ -10,7 +10,7 @@ volatile int task_count=0;
 
  uint32_t Task_Stack[MAX_TASKS][STACK_SIZE]; // Physical RAM for the tasks
  TCB_t Task_table[MAX_TASKS]; 
-void kira_task_create(void (*task_function)(void)) {
+void kira_task_create(void (*task_function)(void),unsigned int priority) {
 
     // Prevent array overflow if we try to create too many tasks
     if (task_count >= MAX_TASKS) {
@@ -18,6 +18,7 @@ void kira_task_create(void (*task_function)(void)) {
     }
     Task_table[task_count].state=TASK_READY;
     Task_table[task_count].sleep_ticks=0;
+    Task_table[task_count].priority=priority;
 
     // 1. Set the xPSR register to Thumb Mode (Index 99)
     Task_Stack[task_count][STACK_SIZE - 1] = 0x01000000;
@@ -34,21 +35,25 @@ void kira_task_create(void (*task_function)(void)) {
 }
 void kira_scheduler(void){
   
-    int temp=current_task;
-
-    do{
-         current_task=(current_task+1)%(task_count-1);
-    }while(temp!=current_task&&Task_table[current_task].state!=TASK_READY);
-    if(Task_table[current_task].state==TASK_READY)
-     {next_task_pointer=&Task_table[current_task];}
-    else
-    {next_task_pointer=&Task_table[task_count-1];}
+    unsigned int highest_priority=0;
+    int next_task_index=(task_count-1);
+	  int i;
+    for(i=0;i<task_count;i++)
+    {
+        if((Task_table[i].state==TASK_READY)&&(Task_table[i].priority>highest_priority))
+        {
+            highest_priority=Task_table[i].priority;
+            next_task_index=i;
+        }
+    }
+    next_task_pointer=&Task_table[next_task_index];
+    current_task=next_task_index;
     scb_icsr|=(1<<28);
 }
 void kira_os_start(void){
 	
 	    
-        kira_task_create(kira_idle_task);
+        kira_task_create(kira_idle_task,1);
 	
 			    __asm volatile ("svc 0");
 	
@@ -63,6 +68,7 @@ void kira_task_sleep(unsigned int ms){
 }
 void kira_idle_task(void){
     while(1){
+			
         __asm volatile("WFI");
       
     }
@@ -123,7 +129,7 @@ void kira_semaphore_init(Semaphore_t *semaphore)
 void kira_semaphore_wait(Semaphore_t *semaphore)
 {
     __disable_irq();
-    if(semaphore->count=1)
+    if(semaphore->count==1)
     {
         semaphore->count=0;
         __enable_irq();
@@ -142,7 +148,7 @@ void kira_semaphore_signal(Semaphore_t *semaphore)
     __disable_irq();
     if(semaphore->blocked_task_id!=-1)
     {
-        Task_table[current_task].state=TASK_READY;
+        Task_table[semaphore->blocked_task_id].state=TASK_READY;
         semaphore->blocked_task_id=-1;
         kira_scheduler();
     }

@@ -2,12 +2,14 @@
 typedef struct {
     uint32_t *sp;
     unsigned char state;
-    unsigned int sleep_ticks; // The Stack Pointer
+    unsigned int sleep_ticks;
+    unsigned int priority; // The Stack Pointer
 } TCB_t;
 typedef struct{
 	unsigned char is_locked;
 	int owner_task_id;
 	int blocked_task_id;
+    
 
 } Mutex_t;
 typedef struct{
@@ -28,7 +30,7 @@ extern volatile int *next_task_pointer;
 extern volatile int current_task;
 extern volatile int task_count;
 void kira_scheduler(void);
-void kira_task_create(void (*task_function)(void)); 
+void kira_task_create(void (*task_function)(void),unsigned int priority); 
 void kira_task_sleep(unsigned int ms);
 void kira_os_start(void);
 void kira_idle_task(void);

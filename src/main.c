@@ -54,9 +54,9 @@ void Task3(void){
 int main() {
     // 1. Initialize SysTick (1ms heartbeat at 72MHz / 8)
 	kira_uart_init();
-	kira_task_create(Task1);
-	kira_task_create(Task2);
-	kira_task_create(Task3);
+	kira_task_create(Task1,2);
+	kira_task_create(Task2,2);
+	kira_task_create(Task3,3);
 
 	kira_systick_init();
 	kira_mutex_init(&uart_mutex);
