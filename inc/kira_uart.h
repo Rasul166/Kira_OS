@@ -24,3 +24,4 @@ struct rx_buffer{
 void ring_buffer_push(char data);
 	  char ring_buffer_pop(void);
       void USART1_IRQHandler(void) ;
+      void kira_print_int(int nums);

@@ -13,7 +13,7 @@ void ring_buffer_push(char data)
 	  rx_b1.ring_buffer[rx_b1.head]=data; //adding the data to buffer if it is not full
 	  rx_b1.head=(rx_b1.head+1)%64; //incrementing the head
 	  }}
-      char ring_buffer_pop(void)
+ char ring_buffer_pop(void)
 	  {
 	    // condition for empty buffer is checked in the main then comes to this function
         if(rx_b1.tail!=rx_b1.head)
@@ -47,6 +47,7 @@ void ring_buffer_push(char data)
 void kira_print_char(char c) {
     // Wait until Transmit Data Register is empty (TXE, Bit 7)
     while(((1<<7) & status_reg) == 0) {}
+		
     data_reg = c;
 }
 
@@ -55,6 +56,33 @@ void kira_print_string(char *str) {
         kira_print_char(*str);	
         str++;
     }
+}
+void kira_print_int(int nums){
+	char print_str[12]; 
+   unsigned int temp = nums;
+    int i = 0;
+    
+    // 1. If time is 0, handle it directly
+    if (temp == 0) {
+        print_str[i++] = '0';
+    } 
+    // 2. Extract digits backwards (e.g., 1024 becomes '4','2','0','1')
+    else {
+        while (temp > 0) {
+            print_str[i++] = (temp % 10) + '0'; // Convert number to ASCII character
+            temp /= 10;
+        }
+    }  
+    // 4. Print the numbers in the correct forward order
+    while (i > 0) {
+        i--;
+        // Send a single character to UART (assuming you have a character print function)
+        kira_print_char(print_str[i]);
+    }
+    
+    // 5. Print the closing bracket and the user's text
+    kira_print_string(" \n");
+
 }
 void USART1_IRQHandler(void) {
     // If RX Not Empty (RXNE, Bit 5) is set

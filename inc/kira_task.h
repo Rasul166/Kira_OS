@@ -3,7 +3,7 @@ typedef struct {
     uint32_t *sp;
     unsigned char state;
     unsigned int sleep_ticks;
-    unsigned int priority; // The Stack Pointer
+     int priority; // The Stack Pointer
 } TCB_t;
 typedef struct{
 	unsigned char is_locked;
@@ -16,10 +16,22 @@ typedef struct{
     unsigned char count;
     int blocked_task_id;
 } Semaphore_t;
+typedef struct{
+     int sensor_id;
+	   float temperature;
+} Custom_data;
+
+typedef struct{
+   Custom_data Custom_data_array[64];
+	int head;
+	int tail;
+    int blocked_task_id;
+}Kira_Queue_t;
+	
 #define TASK_READY 0
 #define TASK_SLEEPING 1
 #define TASK_BLOCKED 2
-#define MAX_TASKS 4
+#define MAX_TASKS 10
 #define STACK_SIZE 100
 #define scb_shpr3 *((volatile unsigned int *)0xE000ED20)
 #define scb_icsr *((volatile unsigned int *)0xE000ED04)
@@ -42,3 +54,5 @@ void __enable_irq();
 void kira_semaphore_init(Semaphore_t *semaphore);
 void kira_semaphore_wait(Semaphore_t *semaphore);
 void kira_semaphore_signal(Semaphore_t *semaphore);
+void kira_queue_send(Custom_data cstm_data);
+Custom_data kira_queue_receive(void);

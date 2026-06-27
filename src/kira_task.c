@@ -7,7 +7,7 @@ volatile int *current_task_pointer=&Task_table[0];
 volatile int *next_task_pointer=&Task_table[1];
 volatile int current_task=0;
 volatile int task_count=0;
-
+ Kira_Queue_t kira_queue={.head=0,.tail=0};
  uint32_t Task_Stack[MAX_TASKS][STACK_SIZE]; // Physical RAM for the tasks
  TCB_t Task_table[MAX_TASKS]; 
 void kira_task_create(void (*task_function)(void),unsigned int priority) {
@@ -35,15 +35,15 @@ void kira_task_create(void (*task_function)(void),unsigned int priority) {
 }
 void kira_scheduler(void){
   
-    unsigned int highest_priority=0;
+    int highest_priority=-1;
     int next_task_index=(task_count-1);
 	  int i;
-    for(i=0;i<task_count;i++)
-    {
-        if((Task_table[i].state==TASK_READY)&&(Task_table[i].priority>highest_priority))
+    for(i=1;i<task_count;i++)
+    {    int index=(current_task+i)%(task_count-1);
+        if((Task_table[index].state==TASK_READY)&&(Task_table[index].priority>highest_priority))
         {
-            highest_priority=Task_table[i].priority;
-            next_task_index=i;
+            highest_priority=Task_table[index].priority;
+            next_task_index=index;
         }
     }
     next_task_pointer=&Task_table[next_task_index];
@@ -153,8 +153,40 @@ void kira_semaphore_signal(Semaphore_t *semaphore)
         kira_scheduler();
     }
     else
-    {
-        semaphore->count=1;
-    }
-    __enable_irq();
+      __enable_irq();
+}
+void kira_queue_send(Custom_data cstm_data){
+	  if((kira_queue.head+1)%64!=kira_queue.tail){
+	  kira_queue.Custom_data_array[kira_queue.head].sensor_id=cstm_data.sensor_id;
+    kira_queue.Custom_data_array[kira_queue.head].temperature=cstm_data.temperature;			//adding the data to buffer if it is not full
+	  kira_queue.head=(kira_queue.head+1)%64; //incrementing the head
+      if(kira_queue.blocked_task_id!=-1)Task_table[kira_queue.blocked_task_id].state=TASK_READY;
+	  }
+      else{
+        kira_queue.blocked_task_id=current_task;
+        Task_table[current_task].state=TASK_BLOCKED;
+        kira_scheduler();
+
+      }
+	    // condition for empty buffer is checked in the main then comes to this function  
+}
+Custom_data kira_queue_receive(void){
+	if(kira_queue.tail!=kira_queue.head)
+        {
+	    int i=kira_queue.Custom_data_array[kira_queue.tail].sensor_id;
+      float j=kira_queue.Custom_data_array[kira_queue.tail].temperature;
+     Custom_data cstm_data;
+   cstm_data.sensor_id=i;
+cstm_data.temperature=j;					//taking data from the buffer and storing in ab
+	    kira_queue.tail=(kira_queue.tail+1)%64;
+              if(kira_queue.blocked_task_id!=-1)Task_table[kira_queue.blocked_task_id].state=TASK_READY;
+ //incrementing the tail
+	    return cstm_data; //returning ab
+	    }
+        else {
+                    kira_queue.blocked_task_id=current_task;
+            Task_table[current_task].state=TASK_BLOCKED;
+        kira_scheduler();
+        }
+	
 }
