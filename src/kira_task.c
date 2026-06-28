@@ -78,6 +78,10 @@ void kira_mutex_init(Mutex_t *mutex){
 	mutex->is_locked=0;
  mutex->blocked_task_id=-1;
 	mutex->owner_task_id=-1;
+    for(int i=0;i<10;i++)
+    {
+        mutex->arr_bt[i]=0;
+    }
 } 
 void kira_mutex_take(Mutex_t *mutex){
 __disable_irq();
@@ -89,8 +93,9 @@ __disable_irq();
 	}
     else
     {
-	mutex->blocked_task_id=current_task;
+	mutex->blocked_task_id++;
 	Task_table[current_task].state=TASK_BLOCKED;
+    mutex->arr_bt[current_task]=Task_table[current_task].priority;
     }	
 	kira_scheduler();
     __enable_irq();
@@ -103,10 +108,20 @@ void kira_mutex_give(Mutex_t *mutex){
 	__disable_irq();
 if (mutex->owner_task_id == current_task){
     if(mutex->blocked_task_id!=-1)
-    {  
-        Task_table[mutex->blocked_task_id].state=TASK_READY;
-        mutex->owner_task_id=mutex->blocked_task_id;
-        mutex->blocked_task_id=-1;
+    { 
+        int max=0;int c;
+         for(int j=0;j<10;j++)
+        {
+            if(mutex->arr_bt[j]>max)
+            {
+                max=mutex->arr_bt[j];
+                c=j;
+            }
+        }
+        Task_table[c].state=TASK_READY;
+        mutex->owner_task_id=c;
+        mutex->arr_bt[c]=0;
+        mutex->blocked_task_id--;
     }    
     else
      {

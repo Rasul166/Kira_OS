@@ -16,7 +16,7 @@ void Task1(void){
 	kira_mutex_take(&uart_mutex);
     kira_print_string("1111111111111111 end ");
 kira_mutex_give(&uart_mutex);
-		kira_task_sleep(6);
+		kira_task_sleep(2);
 		delayms(1);
 	}
 		
@@ -29,7 +29,7 @@ void Task2(void){
 		kira_mutex_take(&uart_mutex);
     kira_print_string("222222222222222222 end ");
 	 kira_mutex_give(&uart_mutex);
-		   kira_task_sleep(2);
+		   kira_task_sleep(1);
 		 delayms(1);
 	 }
   

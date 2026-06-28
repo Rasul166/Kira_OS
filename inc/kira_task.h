@@ -9,6 +9,7 @@ typedef struct{
 	unsigned char is_locked;
 	int owner_task_id;
 	int blocked_task_id;
+	int arr_bt[10];
     
 
 } Mutex_t;
