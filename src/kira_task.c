@@ -1,5 +1,6 @@
  #include<kira_task.h>
 #include<kira_uart.h>
+#include <stdbool.h>
 #define TASK_READY 0
 #define TASK_SLEEPING 1
 #define TASK_BLOCKED 2
@@ -171,37 +172,42 @@ void kira_semaphore_signal(Semaphore_t *semaphore)
       __enable_irq();
 }
 void kira_queue_send(Custom_data cstm_data){
-	  if((kira_queue.head+1)%64!=kira_queue.tail){
-	  kira_queue.Custom_data_array[kira_queue.head].sensor_id=cstm_data.sensor_id;
+    __disable_irq();
+    bool flag=true;
+	  if((kira_queue.head+1)%64==kira_queue.tail){
+	 kira_queue.blocked_task_id=current_task;
+        Task_table[current_task].state=TASK_BLOCKED;
+        kira_scheduler();
+        __enable_irq();
+        flag=false;
+
+	  }
+      if(!flag)__disable_irq();
+       kira_queue.Custom_data_array[kira_queue.head].sensor_id=cstm_data.sensor_id;
     kira_queue.Custom_data_array[kira_queue.head].temperature=cstm_data.temperature;			//adding the data to buffer if it is not full
 	  kira_queue.head=(kira_queue.head+1)%64; //incrementing the head
       if(kira_queue.blocked_task_id!=-1)Task_table[kira_queue.blocked_task_id].state=TASK_READY;
-	  }
-      else{
-        kira_queue.blocked_task_id=current_task;
-        Task_table[current_task].state=TASK_BLOCKED;
-        kira_scheduler();
-
-      }
-	    // condition for empty buffer is checked in the main then comes to this function  
+      __enable_irq();
+	     
 }
 Custom_data kira_queue_receive(void){
-	if(kira_queue.tail!=kira_queue.head)
+    __disable_irq();
+	if(kira_queue.tail==kira_queue.head)
         {
-	    int i=kira_queue.Custom_data_array[kira_queue.tail].sensor_id;
-      float j=kira_queue.Custom_data_array[kira_queue.tail].temperature;
-     Custom_data cstm_data;
-   cstm_data.sensor_id=i;
-cstm_data.temperature=j;					//taking data from the buffer and storing in ab
-	    kira_queue.tail=(kira_queue.tail+1)%64;
-              if(kira_queue.blocked_task_id!=-1)Task_table[kira_queue.blocked_task_id].state=TASK_READY;
- //incrementing the tail
-	    return cstm_data; //returning ab
-	    }
-        else {
-                    kira_queue.blocked_task_id=current_task;
+       kira_queue.blocked_task_id=current_task;
             Task_table[current_task].state=TASK_BLOCKED;
         kira_scheduler();
-        }
+        __enable_irq();
+	    }
+        
+         int i=kira_queue.Custom_data_array[kira_queue.tail].sensor_id;
+         float j=kira_queue.Custom_data_array[kira_queue.tail].temperature;
+         Custom_data cstm_data;
+         cstm_data.sensor_id=i;
+         cstm_data.temperature=j;					
+	    kira_queue.tail=(kira_queue.tail+1)%64;
+    if(kira_queue.blocked_task_id!=-1)Task_table[kira_queue.blocked_task_id].state=TASK_READY;
+ __enable_irq();
+	    return cstm_data; 
 	
 }
