@@ -19,7 +19,8 @@ void kira_task_create(void (*task_function)(void),unsigned int priority) {
     }
     Task_table[task_count].state=TASK_READY;
     Task_table[task_count].sleep_ticks=0;
-    Task_table[task_count].priority=priority;
+    Task_table[task_count].base_priority=priority;
+    Task_table[task_count].current_priority=priority;
 
     // 1. Set the xPSR register to Thumb Mode (Index 99)
     Task_Stack[task_count][STACK_SIZE - 1] = 0x01000000;
@@ -34,6 +35,11 @@ void kira_task_create(void (*task_function)(void),unsigned int priority) {
     // 4. Move to the next slot in the OS table for the next task
     task_count++;
 }
+/* Kernel Invariant:
+ * Idle task is created in OS_Start() after all user tasks.
+ * No task creation is allowed once the scheduler starts.
+ * Therefore, the idle task always resides at task_count - 1.
+ */
 void kira_scheduler(void){
   
     int highest_priority=-1;
@@ -41,9 +47,9 @@ void kira_scheduler(void){
 	  int i;
     for(i=1;i<task_count;i++)
     {    int index=(current_task+i)%(task_count-1);
-        if((Task_table[index].state==TASK_READY)&&(Task_table[index].priority>highest_priority))
+        if((Task_table[index].state==TASK_READY)&&(Task_table[index].current_priority>highest_priority))
         {
-            highest_priority=Task_table[index].priority;
+            highest_priority=Task_table[index].current_priority;
             next_task_index=index;
         }
     }
@@ -77,11 +83,11 @@ void kira_idle_task(void){
 void kira_mutex_init(Mutex_t *mutex){
 	
 	mutex->is_locked=0;
- mutex->blocked_task_id=-1;
+ mutex->no_of_blocked_tasks=0;
 	mutex->owner_task_id=-1;
-    for(int i=0;i<10;i++)
+    for(int i=0;i<MAX_TASKS;i++)
     {
-        mutex->arr_bt[i]=0;
+        mutex->arr_bt[i]=-1;
     }
 } 
 void kira_mutex_take(Mutex_t *mutex){
@@ -90,27 +96,29 @@ __disable_irq();
     {
 		mutex->is_locked=1;
 	mutex->owner_task_id=current_task;
+    Task_table[current_task].mutexes[]=mutex;
 
 	}
     else
-    {
-	mutex->blocked_task_id++;
+    {   if(Task_table[mutex->owner_task_id].current_priority<Task_table[current_task].current_priority)
+        Task_table[mutex->owner_task_id].current_priority=Task_table[current_task].current_priority;//boosting
+	mutex->no_of_blocked_tasks++;
 	Task_table[current_task].state=TASK_BLOCKED;
-    mutex->arr_bt[current_task]=Task_table[current_task].priority;
+    mutex->arr_bt[current_task]=Task_table[current_task].current_priority;
     }	
 	kira_scheduler();
     __enable_irq();
     
-} 	
+}
         
 	
 
 void kira_mutex_give(Mutex_t *mutex){
 	__disable_irq();
 if (mutex->owner_task_id == current_task){
-    if(mutex->blocked_task_id!=-1)
+    if(mutex->no_of_blocked_tasks!=0)
     { 
-        int max=0;int c;
+        int max=-1;int c;
          for(int j=0;j<10;j++)
         {
             if(mutex->arr_bt[j]>max)
@@ -122,7 +130,7 @@ if (mutex->owner_task_id == current_task){
         Task_table[c].state=TASK_READY;
         mutex->owner_task_id=c;
         mutex->arr_bt[c]=0;
-        mutex->blocked_task_id--;
+        mutex->no_of_blocked_tasks--;
     }    
     else
      {
@@ -192,12 +200,14 @@ void kira_queue_send(Custom_data cstm_data){
 }
 Custom_data kira_queue_receive(void){
     __disable_irq();
+     bool flag=true;
 	if(kira_queue.tail==kira_queue.head)
         {
        kira_queue.blocked_task_id=current_task;
             Task_table[current_task].state=TASK_BLOCKED;
         kira_scheduler();
         __enable_irq();
+        flag=false;
 	    }
         
          int i=kira_queue.Custom_data_array[kira_queue.tail].sensor_id;
