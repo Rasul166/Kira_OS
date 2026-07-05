@@ -192,7 +192,7 @@ void kira_queue_send(Custom_data cstm_data){
 }
 Custom_data kira_queue_receive(void){
     __disable_irq();
-	if(kira_queue.tail==kira_queue.head)
+	if(kira_queue.tail==kira_queue.hed )
         {
        kira_queue.blocked_task_id=current_task;
             Task_table[current_task].state=TASK_BLOCKED;
