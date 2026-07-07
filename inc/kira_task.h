@@ -6,7 +6,7 @@ typedef struct
     unsigned int sleep_ticks;
     int current_priority;
     int base_priority;
-    Mutex_t mutexes[5];
+    List owned_mutexes;
 } TCB_t;
 typedef struct
 {
@@ -14,6 +14,7 @@ typedef struct
     int owner_task_id;
     int no_of_blocked_tasks;
     int arr_bt[10];
+    ListNode owner_node;
 
 } Mutex_t;
 typedef struct

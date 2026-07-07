@@ -104,7 +104,7 @@ void kira_mutex_take(Mutex_t *mutex)
     {
         mutex->is_locked = 1;
         mutex->owner_task_id = current_task;
-        Task_table[current_task].mutexes[] = mutex;
+        list_push_back(Task_table[current_task].owned_mutexes,&mutex->owner_node);
     }
     else
     {
@@ -139,6 +139,18 @@ void kira_mutex_give(Mutex_t *mutex)
             mutex->owner_task_id = c;
             mutex->arr_bt[c] = 0;
             mutex->no_of_blocked_tasks--;
+            list_remove(Task_table[current_task].owned_mutexes,&mutex->owner_node);
+            int priority=Task_table[current_task].base_priority;
+          
+                ListNode *node=Task_table[current_task].owned_mutexes.head;
+                while(node){
+                    Mutex_t *mutex=CONTAINER_OF(node,Mutex_t,owner_node);
+                    if(priority<Task_table[mutex->owner_task_id].current_priority ){
+                        priority=Task_table[mutex->owner_task_id].current_priority;
+                    }
+                }
+            Task_table[current_task].current_priority=priority;
+            
         }
         else
         {
