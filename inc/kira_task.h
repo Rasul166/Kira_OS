@@ -1,4 +1,6 @@
 #include <stdint.h>
+#include<kira_ds.h>
+
 typedef struct
 {
     uint32_t *sp;
@@ -27,11 +29,13 @@ typedef struct
     int sensor_id;
     float temperature;
 } Custom_data;
+KIRA_BUFFER_DEFINE(Custom_data, Custom_Data_Buffer, 64);
 typedef struct
 {
     Custom_Data_Buffer cstm_buffer;
     int blocked_task_id;
 } Kira_Queue_t;
+
 
 #define TASK_READY 0
 #define TASK_SLEEPING 1

@@ -9,7 +9,7 @@ volatile int *current_task_pointer = &Task_table[0];
 volatile int *next_task_pointer = &Task_table[1];
 volatile int current_task = 0;
 volatile int task_count = 0;
-KIRA_BUFFER_DEFINE(Custom_data, Custom_Data_Buffer, 64);
+
 
 uint32_t Task_Stack[MAX_TASKS][STACK_SIZE]; // Physical RAM for the tasks
 TCB_t Task_table[MAX_TASKS];
@@ -104,7 +104,7 @@ void kira_mutex_take(Mutex_t *mutex)
     {
         mutex->is_locked = 1;
         mutex->owner_task_id = current_task;
-        list_push_back(Task_table[current_task].owned_mutexes,&mutex->owner_node);
+        list_push_back(&Task_table[current_task].owned_mutexes,&mutex->owner_node);
     }
     else
     {
@@ -139,7 +139,7 @@ void kira_mutex_give(Mutex_t *mutex)
             mutex->owner_task_id = c;
             mutex->arr_bt[c] = 0;
             mutex->no_of_blocked_tasks--;
-            list_remove(Task_table[current_task].owned_mutexes,&mutex->owner_node);
+            list_remove(&Task_table[current_task].owned_mutexes,&mutex->owner_node);
             int priority=Task_table[current_task].base_priority;
           
                 ListNode *node=Task_table[current_task].owned_mutexes.head;
@@ -148,6 +148,7 @@ void kira_mutex_give(Mutex_t *mutex)
                     if(priority<Task_table[mutex->owner_task_id].current_priority ){
                         priority=Task_table[mutex->owner_task_id].current_priority;
                     }
+										node=node->next;
                 }
             Task_table[current_task].current_priority=priority;
             
@@ -202,7 +203,7 @@ void kira_queue_send(Custom_data cstm_data, Kira_Queue_t *kira_queue)
 {
     __disable_irq();
     bool flag = true;
-    if (Custom_Data_Buffer_isFull(kira_queue->cstm_buffer))
+    if (Custom_Data_Buffer_isFull(&kira_queue->cstm_buffer))
     {
         kira_queue->blocked_task_id = current_task;
         Task_table[current_task].state = TASK_BLOCKED;

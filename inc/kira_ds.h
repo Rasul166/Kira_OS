@@ -65,7 +65,6 @@
                                                          \
         return true;                                     \
     }
-#endif
 typedef struct ListNode{
 
     struct ListNode *next;
@@ -90,3 +89,4 @@ ListNode *list_pop_back(List *list);
 
 #define CONTAINER_OF(ptr, type, member) \
     ((type *)((char *)(ptr) - OFFSET_OF(type, member)))
+#endif

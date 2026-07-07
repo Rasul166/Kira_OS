@@ -19,7 +19,7 @@ char ring_buffer_pop(void)
 {
     char ch;
     // Need to write logic if it is full
-    if (!rxbuffer_pop(&rxb1, ch))
+    if (!rxbuffer_pop(&rxb1, &ch))
     {
     }
     return ch;
