@@ -1,4 +1,3 @@
-#include <stdint.h>
 #include<kira_ds.h>
 
 typedef struct
