@@ -102,6 +102,7 @@ void kira_mutex_init(Mutex_t *mutex)
     mutex->is_locked = 0;
     mutex->no_of_blocked_tasks = 0;
     mutex->owner_task_id = -1;
+    mutex->highest_priority = -1;
     for (int i = 0; i < MAX_TASKS; i++)
     {
         mutex->arr_bt[i] = -1;
@@ -117,7 +118,10 @@ void kira_mutex_take(Mutex_t *mutex)
         list_push_back(&Task_table[current_task].owned_mutexes, &mutex->owner_node);
     }
     else
+
     {
+        if (mutex->highest_priority < Task_table[current_task].current_priority)
+            mutex->highest_priority = Task_table[current_task].current_priority;
         if (Task_table[mutex->owner_task_id].current_priority < Task_table[current_task].current_priority)
             Task_table[mutex->owner_task_id].current_priority = Task_table[current_task].current_priority; // boosting
         mutex->no_of_blocked_tasks++;
@@ -156,9 +160,9 @@ void kira_mutex_give(Mutex_t *mutex)
             while (node)
             {
                 Mutex_t *mutex = CONTAINER_OF(node, Mutex_t, owner_node);
-                if (priority < Task_table[mutex->owner_task_id].current_priority)
+                if (priority < mutex->highest_priority)
                 {
-                    priority = Task_table[mutex->owner_task_id].current_priority;
+                    priority = mutex->highest_priority;
                 }
             }
             Task_table[current_task].current_priority = priority;
@@ -247,12 +251,4 @@ Custom_data kira_queue_receive(Kira_Queue_t *kira_queue)
         Task_table[kira_queue->blocked_task_id].state = TASK_READY;
     __enable_irq();
     return *cstm_data;
-}
-kira_kernel_panic(char *reason)
-{
-    __disable_irq();
-    while (true)
-    {
-    }
-    __enable_irq();
 }

@@ -84,8 +84,11 @@ void Task5(void)
 void Task6(void)
 {
 	while (1)
-	{
-		kira_print_int(51342);
+	{ int arr[3000];
+		for(int i=0;i<3000;i++){
+			arr[i]=1;
+		}
+		
 	}
 }
 
