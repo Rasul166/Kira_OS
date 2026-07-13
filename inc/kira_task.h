@@ -1,4 +1,3 @@
-#include <stdint.h>
 #include<kira_ds.h>
 
 typedef struct
@@ -16,6 +15,7 @@ typedef struct
     int owner_task_id;
     int no_of_blocked_tasks;
     int arr_bt[10];
+    int highest_priority;
     ListNode owner_node;
 
 } Mutex_t;

@@ -11,7 +11,6 @@ volatile int *next_task_pointer = &Task_table[1];
 volatile int current_task = 0;
 volatile int task_count = 0;
 
-
 uint32_t Task_Stack[MAX_TASKS][STACK_SIZE]; // Physical RAM for the tasks
 TCB_t Task_table[MAX_TASKS];
 
@@ -37,7 +36,7 @@ int kira_task_create(void (*task_function)(void), unsigned int priority)
     // 3. Save the final Stack Pointer into our OS Task Table.
     // The top of the array is 100, and we pushed 16 fake registers.
     Task_table[task_count].sp = &Task_Stack[task_count][STACK_SIZE - 16];
-
+    Task_Stack[task_count][0] = 0xDEADBEEF;
     // 4. Move to the next slot in the OS table for the next task
     task_count++;
     return task_count;
@@ -63,6 +62,17 @@ void kira_scheduler(void)
         }
     }
     next_task_pointer = &Task_table[next_task_index];
+    if (Task_Stack[current_task][0] != 0xDEADBEEF)
+    {
+        __disable_irq();
+        kira_print_string("Task Number is : ");
+        kira_print_int(current_task);
+        kira_print_string("Overflowed");
+        while (true)
+        {
+        }
+        __enable_irq();
+    }
     temp=current_task;
     current_task=next_task_index;
     if(temp!=next_task_index)
@@ -148,6 +158,7 @@ void kira_mutex_init(Mutex_t *mutex)
     mutex->is_locked = 0;
     mutex->no_of_blocked_tasks = 0;
     mutex->owner_task_id = -1;
+    mutex->highest_priority = -1;
     for (int i = 0; i < MAX_TASKS; i++)
     {
         mutex->arr_bt[i] = -1;
@@ -160,10 +171,13 @@ void kira_mutex_take(Mutex_t *mutex)
     {
         mutex->is_locked = 1;
         mutex->owner_task_id = current_task;
-        list_push_back(&Task_table[current_task].owned_mutexes,&mutex->owner_node);
+        list_push_back(&Task_table[current_task].owned_mutexes, &mutex->owner_node);
     }
     else
+
     {
+        if (mutex->highest_priority < Task_table[current_task].current_priority)
+            mutex->highest_priority = Task_table[current_task].current_priority;
         if (Task_table[mutex->owner_task_id].current_priority < Task_table[current_task].current_priority)
             Task_table[mutex->owner_task_id].current_priority = Task_table[current_task].current_priority; // boosting
         mutex->no_of_blocked_tasks++;
@@ -195,19 +209,20 @@ void kira_mutex_give(Mutex_t *mutex)
             mutex->owner_task_id = c;
             mutex->arr_bt[c] = 0;
             mutex->no_of_blocked_tasks--;
-            list_remove(&Task_table[current_task].owned_mutexes,&mutex->owner_node);
-            int priority=Task_table[current_task].base_priority;
-          
-                ListNode *node=Task_table[current_task].owned_mutexes.head;
-                while(node){
-                    Mutex_t *mutex=CONTAINER_OF(node,Mutex_t,owner_node);
-                    if(priority<Task_table[mutex->owner_task_id].current_priority ){
-                        priority=Task_table[mutex->owner_task_id].current_priority;
-                    }
-										node=node->next;
+            list_remove(&Task_table[current_task].owned_mutexes, &mutex->owner_node);
+            int priority = Task_table[current_task].base_priority;
+
+            ListNode *node = Task_table[current_task].owned_mutexes.head;
+            while (node)
+            {
+                Mutex_t *mutex = CONTAINER_OF(node, Mutex_t, owner_node);
+                if (priority < mutex->highest_priority)
+                {
+                    priority = mutex->highest_priority;
                 }
-            Task_table[current_task].current_priority=priority;
-            
+                node=node->next;
+            }
+            Task_table[current_task].current_priority = priority;
         }
         else
         {
