@@ -164,6 +164,7 @@ void kira_mutex_give(Mutex_t *mutex)
                 {
                     priority = mutex->highest_priority;
                 }
+                node=node->next;
             }
             Task_table[current_task].current_priority = priority;
         }

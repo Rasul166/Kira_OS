@@ -14,7 +14,7 @@ void SysTick_Handler(void)
 {
 
     ticks++;
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i <task_count ; i++)
     {
         if (Task_table[i].state == TASK_SLEEPING)
         {
