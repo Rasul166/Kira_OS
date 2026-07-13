@@ -2,6 +2,7 @@
 #include <kira_uart.h>
 #include <stdbool.h>
 #include <kira_ds.h>
+#include <kira_timer.h>
 #define TASK_READY 0
 #define TASK_SLEEPING 1
 #define TASK_BLOCKED 2
@@ -14,13 +15,13 @@ volatile int task_count = 0;
 uint32_t Task_Stack[MAX_TASKS][STACK_SIZE]; // Physical RAM for the tasks
 TCB_t Task_table[MAX_TASKS];
 
-void kira_task_create(void (*task_function)(void), unsigned int priority)
+int kira_task_create(void (*task_function)(void), unsigned int priority)
 {
 
     // Prevent array overflow if we try to create too many tasks
     if (task_count >= MAX_TASKS)
     {
-        return;
+        return -1;
     }
     Task_table[task_count].state = TASK_READY;
     Task_table[task_count].sleep_ticks = 0;
@@ -39,6 +40,7 @@ void kira_task_create(void (*task_function)(void), unsigned int priority)
 
     // 4. Move to the next slot in the OS table for the next task
     task_count++;
+    return task_count;
 }
 /* Kernel Invariant:
  * Idle task is created in OS_Start() after all user tasks.
@@ -47,7 +49,7 @@ void kira_task_create(void (*task_function)(void), unsigned int priority)
  */
 void kira_scheduler(void)
 {
-
+    int temp; 
     int highest_priority = -1;
     int next_task_index = (task_count - 1);
     int i;
@@ -61,12 +63,14 @@ void kira_scheduler(void)
         }
     }
     next_task_pointer = &Task_table[next_task_index];
-    current_task = next_task_index;
+    temp=current_task;
+    current_task=next_task_index;
+    if(temp!=next_task_index)
     scb_icsr |= (1 << 28);
 }
 void kira_os_start(void)
 {
-
+    daemon_task_id=kira_task_create(kira_daemon_task,4);
     kira_task_create(kira_idle_task, 1);
 
     __asm volatile("svc 0");
@@ -86,6 +90,58 @@ void kira_idle_task(void)
         __asm volatile("WFI");
     }
 }
+
+
+void kira_daemon_task(void)
+{
+    while(1)
+    {
+       
+        while(!command_queue_isEmpty(&cmd_q))
+        {
+          kira_timer_command_receive();
+          int id;
+          for(int i=0;i<timer_count;i++){
+            if(abc.timer_id==LOST[i].Timer_id)
+            id=i;break;
+          }
+          switch (abc.operation)
+          {
+          case 0:
+          {
+            LOST[id].Time_remaining=LOST[id].period;
+             LOST[id].state=abc.operation;break;
+          }  
+          case 1:
+          {
+            LOST[id].Time_remaining=LOST[id].period;
+            LOST[id].state=abc.operation;break;
+          }
+          case 2:
+          {
+            LOST[id].state=abc.operation;break;
+          }
+          case 3:
+          {
+            LOST[id].state=1;break;
+          }
+          default :
+          break;
+         }        
+        }
+        for(int i=0;i<timer_count;i++)
+        {
+            if(exp_timers[i]==1)
+            {
+            LOST[i].func_ptr();
+            exp_timers[i]=0;
+            }
+        }
+        Task_table[daemon_task_id].state=TASK_BLOCKED;
+        kira_scheduler();
+    }
+}
+
 void kira_mutex_init(Mutex_t *mutex)
 {
 

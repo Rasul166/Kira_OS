@@ -3,6 +3,7 @@
 #include <kira_delay.h>
 #include <kira_task.h>
 #include <kira_ds.h>
+#include <kira_timer.h>
 // Reset and Clock Control
 #define rcc_apb2enr *((volatile unsigned int *)0x40021018)
 
@@ -88,6 +89,7 @@ void Task6(void)
 		kira_print_int(51342);
 	}
 }
+
 
 int main()
 {
