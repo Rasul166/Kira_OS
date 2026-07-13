@@ -184,8 +184,9 @@ void kira_mutex_take(Mutex_t *mutex)
         Task_table[current_task].state = TASK_BLOCKED;
         mutex->arr_bt[current_task] = Task_table[current_task].current_priority;
     }
+		 __enable_irq();
     kira_scheduler();
-    __enable_irq();
+   
 }
 
 void kira_mutex_give(Mutex_t *mutex)
@@ -230,9 +231,9 @@ void kira_mutex_give(Mutex_t *mutex)
             mutex->owner_task_id = -1;
         }
     }
-
+ __enable_irq();
     kira_scheduler();
-    __enable_irq();
+   
 }
 
 void kira_semaphore_init(Semaphore_t *semaphore)
@@ -267,8 +268,9 @@ void kira_semaphore_signal(Semaphore_t *semaphore)
         semaphore->blocked_task_id = -1;
         kira_scheduler();
     }
-    else
-        __enable_irq();
+    else{}
+			__enable_irq();
+        
 }
 void kira_queue_send(Custom_data cstm_data, Kira_Queue_t *kira_queue)
 {
