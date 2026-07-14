@@ -102,21 +102,25 @@ void hb(void)
 }
 
 int main()
-{
+ {
 
 	// 1. Initialize SysTick (1ms heartbeat at 72MHz / 8)
+	
+	kira_systick_init();
 	kira_uart_init();
+	kira_mutex_init(&uart_mutex);
+	kira_semaphore_init(&rx_sem);
 	//kira_task_create(Task1, 2);
 	//kira_task_create(Task2, 2);
 	//kira_task_create(Task3, 3);
 	//kira_task_create(Task4, 1);
 	//kira_task_create(Task5, 1);
-	kira_timer_create(69,3000,'o',ic);
-	kira_timer_create(96,500,'r',hb);
+	kira_timer_create(69,2,'o',ic);
+	kira_timer_create(96,5,'r',hb);
+	kira_timer_command_send(69,1);
+	kira_timer_command_send(96,1);
 
-	kira_systick_init();
-	kira_mutex_init(&uart_mutex);
-	kira_semaphore_init(&rx_sem);
+	
 	kira_os_start();
 	return 0;
 }

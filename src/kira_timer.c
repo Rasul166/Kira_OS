@@ -5,8 +5,7 @@
 volatile int timer_count=0;
 volatile int daemon_task_id=-1;
 int exp_timers[15];
-struct Kira_timer_t LOST[15];
-kira_timer_command abc;
+ Kira_timer_t LOST[15];
 command_queue cmd_q;
 
 
@@ -20,12 +19,13 @@ void kira_timer_command_send(int timerid,int op)
 }   
 
 
-void  kira_timer_command_receive(void)
+kira_timer_command  kira_timer_command_receive(void)
 {
     __disable_irq();
-    command_queue_pop(&cmd_q,&abc);
+    kira_timer_command command_receive;
+    command_queue_pop(&cmd_q,&command_receive);
     __enable_irq();
-
+    return command_receive;
 }
 
 

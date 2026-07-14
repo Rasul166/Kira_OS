@@ -47,7 +47,7 @@ int kira_task_create(void (*task_function)(void), unsigned int priority)
  * Therefore, the idle task always resides at task_count - 1.
  */
 void kira_scheduler(void)
-{
+{  
     int temp; 
     int highest_priority = -1;
     int next_task_index = (task_count - 1);
@@ -62,7 +62,7 @@ void kira_scheduler(void)
         }
     }
     next_task_pointer = &Task_table[next_task_index];
-    if (Task_Stack[current_task][0] != 0xDEADBEEF)
+    if (Task_Stack[current_task][0] != 0xDEADBEEF&&task_count!=0)
     {
         __disable_irq();
         kira_print_string("Task Number is : ");
@@ -80,7 +80,7 @@ void kira_scheduler(void)
 }
 void kira_os_start(void)
 {
-    daemon_task_id=kira_task_create(kira_daemon_task,4);
+    daemon_task_id=(kira_task_create(kira_daemon_task,4)-1);
     kira_task_create(kira_idle_task, 1);
 
     __asm volatile("svc 0");
@@ -109,27 +109,28 @@ void kira_daemon_task(void)
        
         while(!command_queue_isEmpty(&cmd_q))
         {
-          kira_timer_command_receive();
+            kira_timer_command received_command;
+         received_command= kira_timer_command_receive();
           int id;
           for(int i=0;i<timer_count;i++){
-            if(abc.timer_id==LOST[i].Timer_id)
-            id=i;break;
+            if(received_command.timer_id==LOST[i].Timer_id){
+            id=i;break;}
           }
-          switch (abc.operation)
+          switch (received_command.operation)
           {
           case 0:
           {
             LOST[id].Time_remaining=LOST[id].period;
-             LOST[id].state=abc.operation;break;
+             LOST[id].state=received_command.operation;break;
           }  
           case 1:
           {
             LOST[id].Time_remaining=LOST[id].period;
-            LOST[id].state=abc.operation;break;
+            LOST[id].state=received_command.operation;break;
           }
           case 2:
           {
-            LOST[id].state=abc.operation;break;
+            LOST[id].state=received_command.operation;break;
           }
           case 3:
           {

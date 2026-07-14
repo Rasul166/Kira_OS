@@ -28,8 +28,7 @@ void SysTick_Handler(void)
     }
     
 
-for(int i=0;i<timer_count;i++)
-{
+
     for(int i=0;i<timer_count;i++)
     {
         if(LOST[i].state==1&&LOST[i].Time_remaining>0)
@@ -47,16 +46,16 @@ for(int i=0;i<timer_count;i++)
         }
         
     }
-}        
+        
 
 
-
+   if(task_count>0)
     kira_scheduler();
 }
 void kira_systick_init(void)
 {
 
-    loadreg = 71999;
+    loadreg = 719;
     currreg = 0;
     ctrlreg |= (7);
 }
