@@ -1,0 +1,4 @@
+#define KIRA_CPU_CLOCK_HZ 72000000
+#define KIRA_TICK_RATE_HZ 1000  
+#define MAX_TASKS 10
+#define STACK_SIZE 100

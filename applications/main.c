@@ -5,11 +5,7 @@
 #include <kira_ds.h>
 #include <kira_timer.h>
 // Reset and Clock Control
-#define rcc_apb2enr *((volatile unsigned int *)0x40021018)
 
-// GPIO Port C (LED Blinking)
-#define gpio_crh *((volatile unsigned int *)0x40011004)
-#define gpio_odr *((volatile unsigned int *)0x4001100C)
 Mutex_t uart_mutex;
 Semaphore_t rx_sem;
 Kira_Queue_t kira_queue;

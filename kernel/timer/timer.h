@@ -32,3 +32,4 @@
    kira_timer_command  kira_timer_command_receive(void);
    void __disable_irq();
    void __enable_irq();
+void kira_daemon_task(void);

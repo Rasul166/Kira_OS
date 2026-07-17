@@ -1,5 +1,6 @@
+#include<stdbool.h>
 #include<stdlib.h>
-#include<kira_ds.h>
+#include<linkedlist.h>
 void list_init(List *list)
 {
     list->head=NULL;

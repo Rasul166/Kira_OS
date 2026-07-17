@@ -1,0 +1,208 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: µVision V5.39.0.0
+Copyright (C) 2023 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: Kk dd, sdsd, LIC=EXJT4-F1YJX-45NT5-GRMS7-GD9AN-9XKAP
+ 
+Tool Versions:
+Toolchain:       MDK-ARM Plus  Version: 5.39.0.0
+Toolchain Path:  C:\Keil_v5\ARM\ARMCLANG\Bin
+C Compiler:      ArmClang.exe V6.21
+Assembler:       Armasm.exe V6.21
+Linker/Locator:  ArmLink.exe V6.21
+Library Manager: ArmAr.exe V6.21
+Hex Converter:   FromElf.exe V6.21
+CPU DLL:         SARMCM3.DLL V5.39.0.0
+Dialog DLL:      DCM.DLL V1.17.5.0
+Target DLL:      UL2CM3.DLL V1.164.9.0
+Dialog DLL:      TCM.DLL V1.56.4.0
+ 
+<h2>Project:</h2>
+C:\Users\KiranYela\Documents\Projects\Kira_OS\tests\uart\uart.uvprojx
+Project File Date:  07/16/2026
+
+<h2>Output:</h2>
+*** Using Compiler 'V6.21', folder: 'C:\Keil_v5\ARM\ARMCLANG\Bin'
+Build target 'Target 1'
+uart_test.c(1): warning: In file included from...
+../../inc\kira_uart.h(21): warning: no newline at end of file [-Wnewline-eof]
+   21 | void kira_print_int(int nums);
+      |                               ^
+uart_test.c(3): warning: a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]
+    3 | int main(){
+      |         ^
+      |          void
+uart_test.c(4): warning: no newline at end of file [-Wnewline-eof]
+    4 | return 0;}      
+      |                 ^
+3 warnings generated.
+compiling uart_test.c...
+../../src/kira_uart.c(2): warning: In file included from...
+../../inc\kira_uart.h(21): warning: no newline at end of file [-Wnewline-eof]
+   21 | void kira_print_int(int nums);
+      |                               ^
+../../src/kira_uart.c(5): warning: In file included from...
+../../inc\kira_task.h(1): warning: In file included from...
+../../inc\kira_ds.h(92): warning: no newline at end of file [-Wnewline-eof]
+   92 | #endif
+      |       ^
+../../src/kira_uart.c(5): warning: In file included from...
+../../inc\kira_task.h(32): warning: padding size of 'Custom_Data_Buffer' with 2 bytes to alignment boundary [-Wpadded]
+   32 | KIRA_BUFFER_DEFINE(Custom_data, Custom_Data_Buffer, 64);
+      | ^
+../../inc\kira_ds.h(15): note: expanded from macro 'KIRA_BUFFER_DEFINE'
+   15 |     typedef struct                                       \
+      |             ^
+../../src/kira_uart.c(5): warning: In file included from...
+../../inc\kira_task.h(32): warning: extra ';' outside of a function [-Wextra-semi]
+   32 | KIRA_BUFFER_DEFINE(Custom_data, Custom_Data_Buffer, 64);
+      |                                                        ^
+../../inc\kira_task.h(7): warning: padding struct 'TCB_t' with 3 bytes to align 'sleep_ticks' [-Wpadded]
+    7 |     unsigned int sleep_ticks;
+      |                  ^
+../../inc\kira_task.h(62): warning: a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]
+   62 | void __disable_irq();
+      |                   ^
+      |                    void
+../../inc\kira_task.h(63): warning: a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]
+   63 | void __enable_irq();
+      |                  ^
+      |                   void
+../../inc\kira_task.h(68): warning: no newline at end of file [-Wnewline-eof]
+   68 | Custom_data kira_queue_receive(Kira_Queue_t *kira_queue_t);
+      |                                                            ^
+../../src/kira_uart.c(8): warning: extra ';' outside of a function [-Wextra-semi]
+    8 | KIRA_BUFFER_DEFINE(char, rxbuffer, 64);
+      |                                       ^
+../../src/kira_uart.c(41): warning: implicit conversion changes signedness: 'int' to 'unsigned int' [-Wsign-conversion]
+   41 |     porta_crh &= ~(0xF << 4);
+      |               ~~ ^~~~~~~~~~~
+../../src/kira_uart.c(68): warning: implicit conversion changes signedness: 'int' to 'unsigned int' [-Wsign-conversion]
+   68 |     unsigned int temp = nums;
+      |                  ~~~~   ^~~~
+../../src/kira_uart.c(5): warning: In file included from...
+../../inc\kira_task.h(25): warning: padding struct 'Semaphore_t' with 3 bytes to align 'blocked_task_id' [-Wpadded]
+   25 |     int blocked_task_id;
+      |         ^
+../../src/kira_uart.c(138): warning: mixing declarations and code is incompatible with standards before C99 [-Wdeclaration-after-statement]
+  138 |         char single_char_str[2] = {time_str[i], '\0'};
+      |              ^
+../../src/kira_uart.c(9): warning: no previous extern declaration for non-static variable 'rxb1' [-Wmissing-variable-declarations]
+    9 | rxbuffer rxb1;
+      |          ^
+../../src/kira_uart.c(9): note: declare 'static' if the variable is not intended to be used outside of this translation unit
+    9 | rxbuffer rxb1;
+      | ^
+../../src/kira_uart.c(8): warning: unused function 'rxbuffer_size' [-Wunused-function]
+    8 | KIRA_BUFFER_DEFINE(char, rxbuffer, 64);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../../inc\kira_ds.h(36): note: expanded from macro 'KIRA_BUFFER_DEFINE'
+   36 |     static inline uint16_t NAME##_size(NAME *cb)         \
+      |                            ^~~~~~~~~~~
+<scratch space>(14): note: expanded from here
+   14 | rxbuffer_size
+      | ^~~~~~~~~~~~~
+../../src/kira_uart.c(8): warning: unused function 'rxbuffer_clear' [-Wunused-function]
+    8 | KIRA_BUFFER_DEFINE(char, rxbuffer, 64);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../../inc\kira_ds.h(40): note: expanded from macro 'KIRA_BUFFER_DEFINE'
+   40 |     static inline void NAME##_clear(NAME *cb)            \
+      |                        ^~~~~~~~~~~~
+<scratch space>(15): note: expanded from here
+   15 | rxbuffer_clear
+      | ^~~~~~~~~~~~~~
+../../src/kira_uart.c(5): warning: In file included from...
+../../inc\kira_task.h(32): warning: unsafe buffer access [-Wunsafe-buffer-usage]
+   32 | KIRA_BUFFER_DEFINE(Custom_data, Custom_Data_Buffer, 64);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../../inc\kira_ds.h(51): note: expanded from macro 'KIRA_BUFFER_DEFINE'
+   51 |         cb->buffer[cb->head] = value;                    \
+      |         ^~~~~~~~~~
+../../src/kira_uart.c(5): warning: In file included from...
+../../inc\kira_task.h(32): warning: unsafe buffer access [-Wunsafe-buffer-usage]
+   32 | KIRA_BUFFER_DEFINE(Custom_data, Custom_Data_Buffer, 64);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../../inc\kira_ds.h(62): note: expanded from macro 'KIRA_BUFFER_DEFINE'
+   62 |         *value = cb->buffer[cb->tail];                   \
+      |                  ^~~~~~~~~~
+../../src/kira_uart.c(8): warning: unsafe buffer access [-Wunsafe-buffer-usage]
+    8 | KIRA_BUFFER_DEFINE(char, rxbuffer, 64);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../../inc\kira_ds.h(51): note: expanded from macro 'KIRA_BUFFER_DEFINE'
+   51 |         cb->buffer[cb->head] = value;                    \
+      |         ^~~~~~~~~~
+../../src/kira_uart.c(8): warning: unsafe buffer access [-Wunsafe-buffer-usage]
+    8 | KIRA_BUFFER_DEFINE(char, rxbuffer, 64);
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../../inc\kira_ds.h(62): note: expanded from macro 'KIRA_BUFFER_DEFINE'
+   62 |         *value = cb->buffer[cb->tail];                   \
+      |                  ^~~~~~~~~~
+../../src/kira_uart.c(62): warning: unsafe pointer arithmetic [-Wunsafe-buffer-usage]
+   62 |         str++;
+      |         ^~~
+../../src/kira_uart.c(74): warning: unsafe buffer access [-Wunsafe-buffer-usage]
+   74 |         print_str[i++] = '0';
+      |         ^~~~~~~~~
+../../src/kira_uart.c(81): warning: unsafe buffer access [-Wunsafe-buffer-usage]
+   81 |             print_str[i++] = (temp % 10) + '0'; // Convert number to ASCII character
+      |             ^~~~~~~~~
+../../src/kira_uart.c(90): warning: unsafe buffer access [-Wunsafe-buffer-usage]
+   90 |         kira_print_char(print_str[i]);
+      |                         ^~~~~~~~~
+../../src/kira_uart.c(117): warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  117 |         time_str[i++] = '0';
+      |         ^~~~~~~~
+../../src/kira_uart.c(124): warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  124 |             time_str[i++] = (temp % 10) + '0'; // Convert number to ASCII character
+      |             ^~~~~~~~
+../../src/kira_uart.c(138): warning: unsafe buffer access [-Wunsafe-buffer-usage]
+  138 |         char single_char_str[2] = {time_str[i], '\0'};
+      |                                    ^~~~~~~~
+27 warnings generated.
+compiling kira_uart.c...
+linking...
+.\Objects\uart.axf: Error: L6218E: Undefined symbol rx_sem (referred from kira_uart.o).
+.\Objects\uart.axf: Error: L6218E: Undefined symbol kira_semaphore_signal (referred from kira_uart.o).
+.\Objects\uart.axf: Error: L6218E: Undefined symbol ticks (referred from kira_uart.o).
+Not enough information to list image symbols.
+Not enough information to list load addresses in the image map.
+Finished: 2 information, 0 warning and 3 error messages.
+".\Objects\uart.axf" - 3 Error(s), 30 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: ARM
+                https://www.keil.com/pack/ARM.CMSIS.6.3.0.pack
+                ARM::CMSIS@6.3.0
+                CMSIS (Common Microcontroller Software Interface Standard)
+   * Component: CORE Version: 6.2.0
+
+Package Vendor: Keil
+                https://www.keil.com/pack/Keil.STM32F1xx_DFP.2.4.1.pack
+                Keil::STM32F1xx_DFP@2.4.1
+                STMicroelectronics STM32F1 Series Device Support, Drivers and Examples
+   * Component: Startup Version: 1.0.0
+
+<h2>Collection of Component include folders:</h2>
+  ./RTE/Device/STM32F103C8
+  ./RTE/_Target_1
+  C:/Keil_v5/ARM/PACK/ARM/CMSIS/6.3.0/CMSIS/Core/Include
+  C:/Keil_v5/ARM/PACK/Keil/STM32F1xx_DFP/2.4.1/Device/Include
+
+<h2>Collection of Component Files used:</h2>
+
+   * Component: ARM::CMSIS:CORE@6.2.0
+
+   * Component: Keil::Device:Startup@1.0.0
+      Source file:   Device/Source/system_stm32f10x.c
+      Include file:  RTE_Driver/Config/RTE_Device.h
+      Source file:   Device/Source/ARM/startup_stm32f10x_md.s
+      Source file:   Device/Source/ARM/STM32F1xx_OPT.s
+Target not created.
+Build Time Elapsed:  00:00:00
+</pre>
+</body>
+</html>
