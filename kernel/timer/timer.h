@@ -1,4 +1,3 @@
- #include<kira_ds.h>
  #include<stdint.h>
  
   typedef struct 
@@ -16,7 +15,7 @@
 {
     int timer_id;
     int operation;
-}kira_timer_command;
+}kira_timer_command; 
 
    extern  Kira_timer_t LOST[15];
    extern volatile int timer_count;

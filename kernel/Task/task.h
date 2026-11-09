@@ -1,6 +1,6 @@
-#include<config.h>
-#include<stdint.h>
-#include<kira_ds.h>
+#include <config.h>
+#include <stdint.h>
+#include<linkedlist.h>
 typedef struct
 {
     uint32_t *sp;
@@ -16,7 +16,6 @@ typedef struct
 #define TASK_READY 0
 #define TASK_SLEEPING 1
 #define TASK_BLOCKED 2
-
 
 extern uint32_t Task_Stack[MAX_TASKS][STACK_SIZE]; // Physical RAM for the tasks
 extern TCB_t Task_table[MAX_TASKS];                // The OS Task Table

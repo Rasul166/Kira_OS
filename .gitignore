@@ -1,1 +1,11 @@
 notes
+.vscode
+# Keil Build Artifacts
+*/Objects/
+*/Listings/
+*.o
+*.d
+*.crf
+*.lnp
+*.htm
+*.map

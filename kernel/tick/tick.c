@@ -1,5 +1,6 @@
 #include <config.h>
 #include <timer.h>
+#include<task.h>
 #include<registers.h>
 volatile unsigned int ticks = 0;
 unsigned int reload_value = KIRA_CPU_CLOCK_HZ / KIRA_TICK_RATE_HZ;

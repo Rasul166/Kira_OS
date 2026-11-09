@@ -1,3 +1,4 @@
+#include <stddef.h>
 #define OFFSET_OF(type, member) \
     ((size_t)&(((type *)0)->member))
 

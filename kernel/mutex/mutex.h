@@ -1,10 +1,9 @@
-#include<kira_ds.h>
+#include <linkedlist.h>
 typedef struct
 {
     unsigned char is_locked;
     int owner_task_id;
-    int no_of_blocked_tasks;
-    int arr_bt[10];
+    List waiting_tasks;
     int highest_priority;
     ListNode owner_node;
 

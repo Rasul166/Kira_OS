@@ -452,23 +452,6 @@
               </Aads>
             </GroupArmAds>
           </GroupOption>
-          <Files>
-            <File>
-              <FileName>uart_test.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\uart_test.c</FilePath>
-            </File>
-            <File>
-              <FileName>kira_uart.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\inc\kira_uart.h</FilePath>
-            </File>
-            <File>
-              <FileName>kira_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\kira_uart.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>::CMSIS</GroupName>
